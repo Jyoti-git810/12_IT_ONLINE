@@ -1,3 +1,4 @@
+import { useAnswerHandler } from "@/hooks/useAnswerHandler";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { setQuestionAttemptStatus } from "@/store/slices/QuestionAttempt";
 import React, { ChangeEvent, useEffect, useState } from "react";
@@ -5,12 +6,9 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 interface FIBInputProps {
   questionText: string;
   questionNumber?: number;
-  category_id?: number;
-  question_id?: number;
-  handleSetAnswer: (answer: {
-    question_id: number;
-    answer: string | number;
-  }) => void;
+  category_id: number;
+  question_id: number;
+  handleAnswerChange: (value: string | number | [], QuestionId: number) => void;
 }
 
 const FIBInput = ({
@@ -18,7 +16,7 @@ const FIBInput = ({
   questionNumber,
   question_id,
   category_id,
-  handleSetAnswer,
+  handleAnswerChange,
 }: FIBInputProps) => {
   const [value, setValue] = useState("");
   const [debounceValue, setDebounceValue] = useState("");
@@ -34,12 +32,7 @@ const FIBInput = ({
   }, [value]);
   useEffect(() => {
     if (debounceValue) {
-      handleSetAnswer({
-        question_id,
-        answer: debounceValue,
-        user_id: 1,
-        category_id: category_id,
-      });
+      handleAnswerChange(debounceValue, question_id);
     }
   }, [debounceValue, question_id]);
 
@@ -55,7 +48,6 @@ const FIBInput = ({
       dispatch(setQuestionAttemptStatus(obj));
     }
   }, [value]);
-
   return (
     <div className="text-black flex justify-between border-1 border-gray-400 items-center">
       <p className="p-4">Q{questionNumber}</p>

@@ -5,7 +5,7 @@ interface TrueFalseQuestionsProps {
   question_text: string;
   id: number;
   handleAnswerSubmit: (
-    event: ChangeEvent<HTMLElement>,
+    event: ChangeEvent<HTMLInputElement>,
     question_id: number
   ) => void;
 }

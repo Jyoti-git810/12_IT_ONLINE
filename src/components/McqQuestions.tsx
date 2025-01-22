@@ -1,25 +1,7 @@
 "use client";
 
-import React, { ChangeEvent } from "react";
-
-interface McqQuestionsProps {
-  QuestionText: string;
-  options: [];
-  QuestionId: number;
-  category_id: number;
-  id: number;
-  mcqAnswer: [
-    {
-      question_id: number;
-      answer: [];
-      checked: boolean;
-    }
-  ];
-  handleMcqAnswer: (
-    event: ChangeEvent<HTMLInputElement>,
-    QuestionId: number
-  ) => void;
-}
+import { McqQuestionsProps } from "@/util/types";
+import React from "react";
 
 const McqQuestions = ({
   QuestionText,

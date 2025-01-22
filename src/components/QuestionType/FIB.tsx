@@ -4,41 +4,14 @@ import React, { useState } from "react";
 import SubmitBtn from "../submitBtn";
 import FIBInput from "../FIBInput";
 import { useAppSelector } from "@/store/hook";
+import { useAnswerHandler } from "@/hooks/useAnswerHandler";
+import { categoryType, FIBType } from "@/util/types";
 
-interface Answer {
-  question_id: number;
-  answer: string | number;
-  category_type: string;
-  user_id: number;
-}
-
-interface FIBType {
-  QuestionID: number;
-  QuestionText: string;
-  category_id: number;
-}
-
-const FIB = () => {
-  const [answer, setAnswer] = useState<
-    {
-      question_id: number;
-      answerText: string | number;
-    }[]
-  >([]);
+const FIB = ({ categoryId }: categoryType) => {
+  const { answers, handleAnswerChange } = useAnswerHandler(categoryId);
   const fibQuestions = useAppSelector(
     (state) => state.fibQuestions.fibQuestions
   );
-  const handleSetAnswer = (answerObj: Answer) => {
-    setAnswer((prev) => {
-      const index = prev.findIndex(
-        (x) => x.question_id === answerObj.question_id
-      );
-      if (index !== -1) {
-        return prev.map((x, i) => (i === index ? answerObj : x));
-      }
-      return [...prev, answerObj];
-    });
-  };
   return (
     <div>
       {fibQuestions.map((x: FIBType, id) => (
@@ -47,12 +20,12 @@ const FIB = () => {
           questionText={x.QuestionText}
           questionNumber={id + 1}
           question_id={x.QuestionID}
-          handleSetAnswer={handleSetAnswer}
           category_id={x.category_id}
+          handleAnswerChange={handleAnswerChange}
         />
       ))}
 
-      <SubmitBtn answerArray={answer} />
+      <SubmitBtn answerArray={answers} />
     </div>
   );
 };

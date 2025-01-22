@@ -4,7 +4,6 @@ import React from "react";
 const QuestionsStatus = () => {
   const categories = useAppSelector((state) => state.categories.categories);
   const questionStatus = useAppSelector((state) => state.questionAttemptStatus);
-  console.log("questionStatus", questionStatus);
 
   return (
     <div className="bg-35a4b9 p-2 w-1/4">

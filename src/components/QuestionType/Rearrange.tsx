@@ -1,11 +1,25 @@
 //import { RearrangeQue } from "@/constant/questions";
+import { useAnswerHandler } from "@/hooks/useAnswerHandler";
 import { useAppSelector } from "@/store/hook";
+import { ChangeEvent } from "react";
+import SubmitBtn from "../submitBtn";
 
-const Rearrange = () => {
+interface RearrangePropsType {
+  categoryId: number;
+}
+
+const Rearrange = ({ categoryId }: RearrangePropsType) => {
+  const { answers, handleAnswerChange } = useAnswerHandler(categoryId);
   const rearrangeQuestions = useAppSelector(
     (state) => state.rearrangeReducer.rearrangeQuestions
   );
-
+  const onInputChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    QuestionID: number
+  ) => {
+    const value = event.target.value;
+    handleAnswerChange(value, QuestionID);
+  };
   return (
     <div>
       <h1 className="text-xl">Match the follwoing</h1>
@@ -34,7 +48,11 @@ const Rearrange = () => {
               <ol className="ol-alpha">
                 {x.data.map((x: any, id: number) => (
                   <li key={id}>
-                    <input type="text" className="w-16 ml-2" />
+                    <input
+                      type="text"
+                      className="w-16 ml-2"
+                      onChange={(event) => onInputChange(event, x.QuestionID)}
+                    />
                   </li>
                 ))}
               </ol>
@@ -42,6 +60,7 @@ const Rearrange = () => {
           </div>
         </div>
       ))}
+      <SubmitBtn answerArray={answers} />
     </div>
   );
 };

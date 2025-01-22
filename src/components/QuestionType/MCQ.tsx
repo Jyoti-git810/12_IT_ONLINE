@@ -1,23 +1,10 @@
 "use client";
-
-import { mcqQuestions } from "@/constant/questions";
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  useEffect,
-  useState,
-} from "react";
+import React, { ChangeEvent, useState } from "react";
 import SubmitBtn from "../submitBtn";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import McqQuestions from "../McqQuestions";
 import { setQuestionAttemptStatus } from "@/store/slices/QuestionAttempt";
-
-interface mcqType {
-  QuestionID: number;
-  QuestionText: string;
-  options: [];
-  categoryName: string;
-}
+import { mcqType } from "@/util/types";
 
 const MCQ = () => {
   const [mcqAnswer, setMcqAnswer] = useState([]);
@@ -49,17 +36,16 @@ const MCQ = () => {
               ? [...item.answer, value]
               : item.answer.filter((ans: any) => ans !== value);
 
-            const gg = { ...item.checked, [value]: isChecked };
+            const isCheckedObj = { ...item.checked, [value]: isChecked };
             return {
               ...item,
-              checked: gg,
+              checked: isCheckedObj,
               answer: updatedAnswers,
             };
           }
           return item;
         });
-        mcqCategoryObj = mcqCategoryObj.filter((x) => x.answer.length > 0);
-        console.log("mcqCategoryObj", mcqCategoryObj);
+        mcqCategoryObj = mcqCategoryObj.filter((x: any) => x.answer.length > 0);
       } else if (isChecked) {
         mcqCategoryObj = [
           ...mcqCategoryObj,
@@ -68,13 +54,13 @@ const MCQ = () => {
             answer: [value],
             checked: { [value]: isChecked },
             category_id: categoryId,
+            user_id: 1,
           },
         ];
       }
       const answerArray = mcqCategoryObj.find(
-        (x) => x.question_id === QuestionId
+        (x: any) => x.question_id === QuestionId
       );
-      console.log("answerArray", answerArray);
 
       dispatch(
         setQuestionAttemptStatus({
@@ -86,7 +72,6 @@ const MCQ = () => {
       return mcqCategoryObj;
     });
   };
-  console.log("mcqAnswer", mcqAnswer);
   return (
     <div>
       {mcqQuestionsByCategory.map((mcq: any, id: number) => (

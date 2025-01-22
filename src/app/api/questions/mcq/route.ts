@@ -8,7 +8,7 @@ export async function GET() {
                 SELECT m.QuestionID, m.QuestionText,m.CorrectOptions,m.WrongOptions,c.category_name,m.category_id FROM MCQQuestions m 
                 INNER JOIN categories c ON m.category_id = c.category_id`;
     const [result] = await conn.query(SQL);
-    console.log("result", result);
+
     return NextResponse.json(result);
   } catch (e) {
     return NextResponse.json(e);

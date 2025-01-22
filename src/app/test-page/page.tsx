@@ -16,9 +16,6 @@ import React, { useEffect } from "react";
 
 const page = () => {
   const categories = useAppSelector((state) => state.categories.categories);
-  const categoryName = useAppSelector((state) => state.categories.categoryName);
-  const answer = useAppSelector((state) => state.UserResponse.userResponse);
-  console.log("answer", answer);
   const dispatch = useAppDispatch();
   useEffect(() => {
     const callApis = async () => {
