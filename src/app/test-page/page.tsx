@@ -13,6 +13,7 @@ import { setTrueFalseQuestions } from "@/store/slices/trueORFalseQuestions";
 import { getQuestionsStatusObj } from "@/util/questionStatus";
 import { transformMatch } from "@/util/transformeRearrange";
 import React, { useEffect } from "react";
+import Link from "next/link";
 
 const page = () => {
   const categories = useAppSelector((state) => state.categories.categories);
@@ -46,6 +47,7 @@ const page = () => {
         const questionsStatusData = getQuestionsStatusObj(allQuestions);
         dispatch(setIntialQuestionAttemptStatus(questionsStatusData));
         dispatch(getAllCategory(categoryResult));
+        localStorage.setItem("categories", JSON.stringify(categoryResult));
         dispatch(getFibQuestion(fibResponseJson));
         dispatch(getMcqQuestions(mcqResponseJson));
         dispatch(setTrueFalseQuestions(trueOrfalse));
@@ -76,6 +78,7 @@ const page = () => {
             />
           ))}
         </div>
+        <Link href="/result">END Exam</Link>
       </div>
       <div className="flex">
         <QuestionsStatus />

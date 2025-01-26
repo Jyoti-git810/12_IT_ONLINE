@@ -1,14 +1,17 @@
 import mysql from "mysql2/promise";
 
-let connection;
+let pool;
 
 export const createConnection = async () => {
-  if (!connection) {
-    connection = await mysql.createConnection({
+  if (!pool) {
+    pool = await mysql.createPool({
       host: "localhost",
       user: "root",
       database: "IT-ONLINE",
+      waitForConnections: true,
+      connectionLimit: 10, // Adjust as needed
+      queueLimit: 0,
     });
   }
-  return connection;
+  return pool;
 };
