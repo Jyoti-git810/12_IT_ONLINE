@@ -1,9 +1,9 @@
 "use client";
 import React, { ChangeEvent, useState } from "react";
 import SubmitBtn from "../submitBtn";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import McqQuestions from "../McqQuestions";
-import { setQuestionAttemptStatus } from "@/store/slices/QuestionAttempt";
+import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
 import { mcqType } from "@/util/types";
 
 const MCQ = () => {
@@ -16,6 +16,11 @@ const MCQ = () => {
   const mcqQuestionsByCategory = mcqQuestions.filter(
     (x) => x.categoryName === categoryName
   );
+  const chapterSelected = useAppSelector(
+    (state) => state.chapter.chapterSelected
+  );
+  const exameId = JSON.parse(localStorage.getItem("exameId"));
+  const { userId } = useAppSelector((state) => state.user.user);
   const dispatch = useAppDispatch();
   const handleMcqAnswer = (
     event: ChangeEvent<HTMLInputElement>,
@@ -54,7 +59,10 @@ const MCQ = () => {
             answer: [value],
             checked: { [value]: isChecked },
             category_id: categoryId,
-            user_id: 1,
+            user_id: userId,
+            chapter_name: chapterSelected.chapterName,
+            chapter_id: chapterSelected.chapterID,
+            examId: exameId,
           },
         ];
       }

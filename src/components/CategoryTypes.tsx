@@ -1,7 +1,7 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { setCategoryType } from "@/store/slices/categories";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { setCategoryType } from "@/redux/slices/categories";
 import React from "react";
 
 interface QusetionTypeProps {

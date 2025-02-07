@@ -1,6 +1,6 @@
 //import { RearrangeQue } from "@/constant/questions";
 import { useAnswerHandler } from "@/hooks/useAnswerHandler";
-import { useAppSelector } from "@/store/hook";
+import { useAppSelector } from "@/redux/hook";
 import { ChangeEvent } from "react";
 import SubmitBtn from "../submitBtn";
 

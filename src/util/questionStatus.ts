@@ -7,6 +7,7 @@ type AccArray = {
   question_id: number;
   isAttempt: boolean;
   isSubmitted: boolean;
+  isFiledDisabled: boolean;
 };
 interface AccType {
   [key: number]: AccArray[];
@@ -22,6 +23,7 @@ export const getQuestionsStatusObj = (allQuestions: AllQuestionsType[]) => {
       question_id: x.QuestionID,
       isAttempt: false,
       isSubmitted: false,
+      isFiledDisabled: false,
     });
 
     return acc;

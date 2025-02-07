@@ -1,13 +1,16 @@
-import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { setUserResponse } from "@/store/slices/userResponse";
-import { setIsSubmittedStatus } from "@/store/slices/QuestionAttempt";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { setUserResponse } from "@/redux/slices/userResponse";
+import { setIsSubmittedStatus } from "@/redux/slices/QuestionAttempt";
 import React from "react";
 import { tableName } from "@/constants";
-import { useAnswerHandler } from "@/hooks/useAnswerHandler";
+import { getFibUserResponse } from "@/redux/slices/Fib";
+import axios from "axios";
 
 const SubmitBtn = ({ answerArray }) => {
   const dispatch = useAppDispatch();
   const categoryName = useAppSelector((state) => state.categories.categoryName);
+  const { userId } = useAppSelector((state) => state.user.user);
+  const examId = JSON.parse(localStorage.getItem("exameId"));
   const CategorytableName = tableName[categoryName];
   let newAnswerArray;
   if (categoryName.includes("MCQ")) {
@@ -19,17 +22,15 @@ const SubmitBtn = ({ answerArray }) => {
     newAnswerArray = answerArray;
   }
   const onSubmit = async () => {
-    await fetch("api/answer/insert", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    console.log("newAnswerArray", newAnswerArray);
+    await axios
+      .post("api/answer/insert", {
         data: newAnswerArray,
         tableName: CategorytableName,
-      }),
-    })
-      .then((data) => console.log("submitted"))
+        userId: userId,
+        exmeId: examId,
+      })
+      .then((data) => console.log("success"))
       .catch((e) => console.log(e));
     dispatch(setUserResponse(answerArray));
     const answerSubmit = answerArray.map((item) => ({

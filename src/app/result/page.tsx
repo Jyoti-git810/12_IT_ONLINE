@@ -1,9 +1,9 @@
 "use client";
 
 import CategoryTypes from "@/components/CategoryTypes";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import React, { useEffect } from "react";
-import { setMarks } from "@/store/slices/marks";
+import { setMarks } from "@/redux/slices/marks";
 import Preview from "@/components/Preview";
 import Image from "next/image";
 

@@ -3,7 +3,7 @@ import FIB from "./QuestionType/FIB";
 import TrueFalse from "./QuestionType/TrueFalse";
 import MCQ from "./QuestionType/MCQ";
 import Rearrange from "./QuestionType/Rearrange";
-import { useAppSelector } from "@/store/hook";
+import { useAppSelector } from "@/redux/hook";
 import { mcqType } from "@/constant/questionType";
 
 const QuestionList = () => {

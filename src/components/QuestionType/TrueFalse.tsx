@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import SubmitBtn from "../submitBtn";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import TrueFalseQuestions from "../TrueFalseQuestions";
-import { setQuestionAttemptStatus } from "@/store/slices/QuestionAttempt";
+import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
 import { useAnswerHandler } from "@/hooks/useAnswerHandler";
 import { categoryType } from "@/util/types";
 

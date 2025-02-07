@@ -22,16 +22,9 @@ const QuestionAttemptSlice = createSlice({
     },
     setQuestionAttemptStatus(state, action) {
       const { category_id, value, question_id } = action.payload;
-      state[category_id].forEach((item) => {
-        if (item.question_id === question_id) {
-          if (value) {
-            item.isAttempt = true;
-            item.isSubmitted = false;
-          } else {
-            item.isAttempt = false;
-          }
-        }
-      });
+      state[category_id] = state[category_id]?.map((x) =>
+        x.question_id === question_id && value ? { ...x, isAttempt: true } : x
+      );
     },
     setIsSubmittedStatus(state, action) {
       action.payload.forEach((item: any) => {

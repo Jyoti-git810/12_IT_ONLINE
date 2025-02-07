@@ -15,3 +15,6 @@ export const tableName: Record<Category, string> = {
   MCQ4: "McqUserAnswers",
   Rearrange: "RearrangeUserAnswer",
 };
+
+export const showStudentName = ["/", "/test-page", "/result"];
+export const showTimer = ["/test-page"];

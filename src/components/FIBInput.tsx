@@ -1,6 +1,5 @@
-import { useAnswerHandler } from "@/hooks/useAnswerHandler";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { setQuestionAttemptStatus } from "@/store/slices/QuestionAttempt";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
 import React, { ChangeEvent, useEffect, useState } from "react";
 
 interface FIBInputProps {
@@ -8,6 +7,7 @@ interface FIBInputProps {
   questionNumber?: number;
   category_id: number;
   question_id: number;
+  disable: boolean;
   handleAnswerChange: (value: string | number | [], QuestionId: number) => void;
 }
 
@@ -15,7 +15,6 @@ const FIBInput = ({
   questionText,
   questionNumber,
   question_id,
-  category_id,
   handleAnswerChange,
 }: FIBInputProps) => {
   const [value, setValue] = useState("");
@@ -24,6 +23,11 @@ const FIBInput = ({
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   };
+  const { fibUserResponse } = useAppSelector((state) => state.FIB);
+  const userAnswer = fibUserResponse.find(
+    (x: any) => x.QuestionID === question_id
+  )?.answer;
+  console.log("userAnswer", userAnswer);
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebounceValue(value);
@@ -42,12 +46,16 @@ const FIBInput = ({
       value,
       category_id: 1,
     };
-    if (value.length === 1) {
+    if (value?.length === 1) {
       dispatch(setQuestionAttemptStatus(obj));
-    } else if (value.length === 0) {
+    } else if (value?.length === 0) {
       dispatch(setQuestionAttemptStatus(obj));
     }
   }, [value]);
+  useEffect(() => {
+    setValue(userAnswer);
+  }, [userAnswer]);
+
   return (
     <div className="text-black flex justify-between border-1 border-gray-400 items-center">
       <p className="p-4">Q{questionNumber}</p>
@@ -56,7 +64,7 @@ const FIBInput = ({
         <input
           type="text"
           className="border-1 border-gray-400 w-full"
-          value={value}
+          value={value || ""}
           onChange={onInputChange}
         />
       </div>

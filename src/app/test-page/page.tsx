@@ -3,66 +3,104 @@
 import QuestionsStatus from "@/components/QuestionsStatus";
 import QuestionList from "@/components/QuestionList";
 import CategoryTypes from "@/components/CategoryTypes";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { setIntialQuestionAttemptStatus } from "@/store/slices/QuestionAttempt";
-import { getAllCategory } from "@/store/slices/categories";
-import { getFibQuestion } from "@/store/slices/Fib";
-import { setRearrangeQuestions } from "@/store/slices/rearrange";
-import { getMcqQuestions } from "@/store/slices/mcqQuestions";
-import { setTrueFalseQuestions } from "@/store/slices/trueORFalseQuestions";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
+import { setIntialQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
+import { getAllCategory } from "@/redux/slices/categories";
+import { getFibQuestion, getFibUserResponse } from "@/redux/slices/Fib";
+import { setRearrangeQuestions } from "@/redux/slices/rearrange";
+import { getMcqQuestions } from "@/redux/slices/mcqQuestions";
+import { setTrueFalseQuestions } from "@/redux/slices/trueORFalseQuestions";
 import { getQuestionsStatusObj } from "@/util/questionStatus";
 import { transformMatch } from "@/util/transformeRearrange";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import Link from "next/link";
+import axios from "axios";
+import moment from "moment";
+import { setTimer } from "@/redux/slices/timer";
+import { useRouter } from "next/navigation";
+import { setUser } from "@/redux/slices/user";
+import { tableName } from "@/constants";
 
-const page = () => {
+const Page = () => {
   const categories = useAppSelector((state) => state.categories.categories);
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    const callApis = async () => {
-      try {
-        const [
-          categoryResult,
-          fibResponseJson,
-          mcqResponseJson,
-          trueOrfalse,
-          rearrangeJson,
-        ] = await Promise.all([
-          fetch("api/category").then((res) => res.json()),
-          fetch("api/questions/fib").then((res) => res.json()),
-          fetch("api/questions/mcq").then((res) => res.json()),
-          fetch("api/questions/trueOrfalse").then((res) => res.json()),
-          fetch("api/questions/rearrange").then((res) => res.json()),
-        ]);
-        const rearrange = transformMatch(rearrangeJson);
-        const RearrangeData = rearrange.map((x) => x.data);
-        const flatRearrangeData = RearrangeData.flat();
-        const allQuestions = [
-          ...fibResponseJson,
-          ...mcqResponseJson,
-          ...trueOrfalse,
-          ...flatRearrangeData,
-        ];
+  const router = useRouter();
+  const { chapterName } = useAppSelector((state) => state.chapter);
+  const { userId } = useAppSelector((state) => state.user.user);
+  console.log("userId", userId);
 
-        const questionsStatusData = getQuestionsStatusObj(allQuestions);
-        dispatch(setIntialQuestionAttemptStatus(questionsStatusData));
-        dispatch(getAllCategory(categoryResult));
-        localStorage.setItem("categories", JSON.stringify(categoryResult));
-        dispatch(getFibQuestion(fibResponseJson));
-        dispatch(getMcqQuestions(mcqResponseJson));
-        dispatch(setTrueFalseQuestions(trueOrfalse));
-        dispatch(setRearrangeQuestions(rearrange));
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  // Define API calls using useCallback to prevent re-creating the function
+  const callApis = useCallback(async () => {
+    try {
+      const [
+        categoryResult,
+        fibResponseJson,
+        mcqResponseJson,
+        trueOrfalse,
+        rearrangeJson,
+      ] = await Promise.all([
+        axios.get("api/category").then((res) => res.data),
+        axios.get("api/questions/fib").then((res) => res.data),
+        axios.get("api/questions/mcq").then((res) => res.data),
+        axios.get("api/questions/trueOrfalse").then((res) => res.data),
+        axios.get("api/questions/rearrange").then((res) => res.data),
+        axios
+          .post("/api/answer/select", {
+            tableName: "FIBUserAnswer",
+            userId: userId,
+          })
+          .then((res) => dispatch(getFibUserResponse(res.data.data))),
+      ]);
+      const rearrange = transformMatch(rearrangeJson);
+      const flatRearrangeData = rearrange.flatMap((x) => x.data);
+      const allQuestions = [
+        ...fibResponseJson,
+        ...mcqResponseJson,
+        ...trueOrfalse,
+        ...flatRearrangeData,
+      ];
+      const questionsStatusData = getQuestionsStatusObj(allQuestions);
+      dispatch(setIntialQuestionAttemptStatus(questionsStatusData));
+      dispatch(getAllCategory(categoryResult));
+      dispatch(getFibQuestion(fibResponseJson));
+      dispatch(getMcqQuestions(mcqResponseJson));
+      dispatch(setTrueFalseQuestions(trueOrfalse));
+      dispatch(setRearrangeQuestions(rearrange));
+
+      // Store categories locally (if necessary)
+      localStorage.setItem("categories", JSON.stringify(categoryResult));
+    } catch (error) {
+      console.error(
+        "Error fetching data:",
+        error.response?.data || error.message
+      );
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
     callApis();
+  }, [callApis]);
+
+  useEffect(() => {
+    const endTime = new Date().getTime() + 60 * 60 * 1000;
+    const interval = setInterval(() => {
+      const diff = endTime - new Date().getTime();
+      const hour = Math.floor((diff / (60 * 60 * 1000)) % 24);
+      const min = Math.floor((diff / (60 * 1000)) % 60);
+      const sec = Math.floor((diff / 1000) % 60);
+      if (diff <= 0) {
+        clearInterval(interval);
+        router.push("/result");
+      } else {
+        dispatch(setTimer({ hour, min, sec }));
+      }
+    }, 1000);
   }, []);
 
   return (
     <>
       <div className="text-black flex justify-between items-start mt-2">
-        <div className="w-17%">
+        <div className="w-1/6">
           <p className="border-b-2 border-black p-2">Paper Id:</p>
           <p className="border-b-2 border-black p-2">N02S</p>
           <p className="p-2">You are Viewing</p>
@@ -88,4 +126,4 @@ const page = () => {
   );
 };
 
-export default React.memo(page);
+export default React.memo(Page);

@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/api/questions/mcq/insert"
+    "src/app/api/questions/mcq/insert",
+    "src/app/signup"
   ],
   "exclude": ["node_modules"]
 }

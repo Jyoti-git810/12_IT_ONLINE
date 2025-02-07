@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { transformMcqAns } from "@/util/transform_ans";
 import React from "react";
 

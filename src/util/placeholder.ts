@@ -4,8 +4,11 @@ export const getPlaceholders = (values) => {
     item.category_id,
     item.user_id,
     item.answer,
+    item.chapter_id,
+    item.chapter_name,
+    item.examId,
   ]);
   const placeholderValues = reqBodyArray.flat();
-  const placeholder = reqBodyArray.map(() => "(?, ?, ?, ?)").join(", ");
+  const placeholder = reqBodyArray.map(() => "(?,?,?,?,?,?,?)").join(", ");
   return { reqBodyArray, placeholder, placeholderValues };
 };

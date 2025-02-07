@@ -10,7 +10,6 @@ export const createConnection = async () => {
       database: "IT-ONLINE",
       waitForConnections: true,
       connectionLimit: 10, // Adjust as needed
-      queueLimit: 0,
     });
   }
   return pool;

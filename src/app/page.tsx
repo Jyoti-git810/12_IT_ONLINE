@@ -1,82 +1,121 @@
-import Image from "next/image";
+"use client";
+
+import { useAppDispatch } from "@/redux/hook";
+import { setChapter } from "@/redux/slices/chapter";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    axios
+      .get("/api/chapter")
+      .then((data) => {
+        dispatch(setChapter(data.data.chapter));
+      })
+      .catch((e) => console.log(e));
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-4xl">
-        <h1 className="text-2xl font-bold text-center text-red-600 mb-4">
-          Double-Border Table Example
-        </h1>
-        <table className="w-full border-collapse border-4 border-gray-800">
-          <thead>
-            <tr>
-              <th className="border-2 border-gray-800 px-4 py-2 text-left bg-gray-200">
-                Question
-              </th>
-              <th className="border-2 border-gray-800 px-4 py-2 text-left bg-gray-200">
-                True
-              </th>
-              <th className="border-2 border-gray-800 px-4 py-2 text-left bg-gray-200">
-                False
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Question Row 1 */}
-            <tr>
-              <td className="border-2 border-gray-800 px-4 py-2">
-                &lt;bgsound&gt; audio tag is supported only by Internet
-                Explorer.
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q1" />
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q1" />
-              </td>
-            </tr>
-
-            {/* Question Row 2 */}
-            <tr>
-              <td className="border-2 border-gray-800 px-4 py-2">
-                .NET Framework provides tools to build network applications.
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q2" />
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q2" />
-              </td>
-            </tr>
-
-            {/* Question Row 3 */}
-            <tr>
-              <td className="border-2 border-gray-800 px-4 py-2">
-                To display a circle, coordinates and radius are required.
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q3" />
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q3" />
-              </td>
-            </tr>
-
-            {/* Question Row 4 */}
-            <tr>
-              <td className="border-2 border-gray-800 px-4 py-2">
-                In DBMS, searching a particular record is possible.
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q4" />
-              </td>
-              <td className="border-2 border-gray-800 text-center">
-                <input type="radio" name="q4" />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div className="p-5 font-sans flex flex-col justify-center items-center">
+      <table className="w-10/12 border-collapse border border-gray-300 mt-9">
+        <thead>
+          <tr>
+            <th className="border border-gray-300"></th>
+            <th className="border border-gray-300 p-2">
+              <p className="text-purple-900 text-left">
+                Colours And their Meaning
+              </p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="flex justify-center items-center py-2">
+              <div className="bg-red-600 w-10 h-6"></div>
+            </td>
+            <td className="border border-gray-300 p-2 text-purple-900 font-bold">
+              Answer not submitted.
+            </td>
+          </tr>
+          <tr>
+            <td className="border-t-1 border-gray-300 flex justify-center py-2">
+              <div className="bg-green-700 w-10 h-6"></div>
+            </td>
+            <td className="border border-gray-300 p-2 text-purple-900 font-bold">
+              Answer Submitted.
+            </td>
+          </tr>
+          <tr>
+            <td className="border-t-1 border-gray-300 flex justify-center py-2">
+              <div className="bg-amber-500 w-10 h-6"></div>
+            </td>
+            <td className="border border-gray-300 p-2 text-purple-900 font-bold">
+              Answer Attempt
+            </td>
+          </tr>
+          <tr>
+            <td className="border border-gray-300"></td>
+            <td className="border border-gray-300 p-2 text-red-600 font-bold">
+              Paper will display 10 mins before the exam but students cannot
+              attempt it.
+            </td>
+          </tr>
+          <tr>
+            <td className="border border-gray-300"></td>
+            <td className="border border-gray-300 p-3 text-green-600 font-bold">
+              If you Submit your answers and Relogin the System automatically
+              detect and restore answer automatically.
+            </td>
+          </tr>
+          <tr>
+            <td className="border border-gray-300"></td>
+            <td className="border border-gray-300 p-3">
+              <p className="text-purple-900 font-bold">
+                Handicap Category Shown On The Top Right.
+              </p>
+              <ul className="list-none">
+                <li className="text-purple-900 font-bold p-0">
+                  HC 0 - No extra time.
+                </li>
+                <li className="text-purple-900 font-bold p-0">
+                  HC 1,4 - 50 minutes extra time.
+                </li>
+                <li className="text-purple-900 font-bold p-0">
+                  HC 2,3,8,9 - 30 minutes extra time.
+                </li>
+                <li className="text-purple-900 font-bold p-0">
+                  HC 5 - 2 hours extra time.
+                </li>
+                <li className="text-purple-900 font-bold p-0">
+                  HC 6,7 - 1 hour extra time.
+                </li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td className="border border-gray-300"></td>
+            <td className="border border-gray-300 p-3 text-red-600 font-bold">
+              <p>Submit Each and Every Question as you Solve It.</p>
+              <p>Do Not Wait to Submit till last Minute.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <select>
+          <option value=""></option>
+          <option value=""></option>
+        </select>
       </div>
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-9"
+        onClick={() => router.push("chapter")}
+      >
+        Select Chapter
+      </button>
     </div>
   );
 }
