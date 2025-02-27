@@ -14,17 +14,29 @@ const page = () => {
   const storedCategories = JSON.parse(localStorage.getItem("categories") || "");
   const allCategories = storedCategories || categories;
   const { totalMarks } = useAppSelector((state) => state.marks);
+  const { userId } = useAppSelector((state) => state.user.user);
+  const examId = localStorage.getItem("examId");
   const dispatch = useAppDispatch();
   useEffect(() => {
     const callResultApis = async () => {
       try {
         const [mcqMarks, rearrangeMarks, fibMarks, trueFalseMarks, preview] =
           await Promise.all([
-            fetch(`api/marks?key=mcq`).then((marks) => marks.json()),
-            fetch("api/marks?key=rearrange").then((marks) => marks.json()),
-            fetch("api/marks?key=fib").then((marks) => marks.json()),
-            fetch("api/marks?key=trueFalse").then((marks) => marks.json()),
-            fetch(`api/preview`).then((marks) => marks.json()),
+            fetch(`api/marks?key=mcq&&userId=${userId}&&examId=${examId}`).then(
+              (marks) => marks.json()
+            ),
+            fetch(
+              `api/marks?key=rearrange&&userId=${userId}&&examId=${examId}`
+            ).then((marks) => marks.json()),
+            fetch(`api/marks?key=fib&&userId=${userId}&&examId=${examId}`).then(
+              (marks) => marks.json()
+            ),
+            fetch(
+              `api/marks?key=trueFalse&&userId=${userId}&&examId=${examId}`
+            ).then((marks) => marks.json()),
+            fetch(`api/preview/?userId=${userId}&&examId=${examId}`).then(
+              (marks) => marks.json()
+            ),
           ]);
 
         const categoryViseMarksObj = {

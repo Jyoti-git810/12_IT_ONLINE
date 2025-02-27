@@ -1,9 +1,11 @@
+import { tableName } from "@/constants";
 import { ChangeEvent } from "react";
 
 export interface categoryType {
   categoryId: number;
 }
 
+export type CategoryNameType = keyof typeof tableName;
 export interface FIBType {
   QuestionID: number;
   QuestionText: string;

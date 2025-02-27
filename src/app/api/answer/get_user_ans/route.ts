@@ -3,19 +3,18 @@ import { getPlaceholders } from "@/util/placeholder";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest, response: NextResponse) {
-  const { tableName, userId } = await request.json();
-  console.log("userId", userId);
-  const conn = await createConnection();
-  const selectSQL = `SELECT * FROM ${tableName} WHERE userID = ?`;
+  const { tableName, userId, examId } = await request.json();
+  let conn;
+  const selectSQL = `SELECT * FROM ${tableName} WHERE userID = ? AND examId=?`;
 
   try {
-    const [selectSQLResult] = await conn.query(selectSQL, [userId]);
+    conn = await createConnection();
+    const [selectSQLResult] = await conn.query(selectSQL, [userId, examId]);
     return NextResponse.json({
-      message: "Data inserted successfully",
+      message: "Data fetched successfully",
       data: selectSQLResult,
     });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { message: "Error occurred", error: error },
       { status: 500 }

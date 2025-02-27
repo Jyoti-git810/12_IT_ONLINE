@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  restrictName,
-  restrictTimer,
-  showStudentName,
-  showTimer,
-} from "@/constants";
+import { showStudentName, showTimer } from "@/constants";
 import { useAppSelector } from "@/redux/hook";
 import Image from "next/image";
 import Link from "next/link";

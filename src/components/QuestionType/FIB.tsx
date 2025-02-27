@@ -19,7 +19,7 @@ const FIB = ({ categoryId }: categoryType) => {
             questionText={x.QuestionText}
             questionNumber={id + 1}
             question_id={x.QuestionID}
-            category_id={x.category_id}
+            categoryId={x.category_id}
             handleAnswerChange={handleAnswerChange}
           />
         );

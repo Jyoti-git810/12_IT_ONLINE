@@ -9,6 +9,8 @@ import marksReducer from "./slices/marks";
 import setTimerReducer from "./slices/timer";
 import userReducer from "./slices/user";
 import chapterReducer from "./slices/chapter";
+import shortAnsReducer from "./slices/short";
+import programmeReducer from "./slices/programme";
 import { combineReducers } from "@reduxjs/toolkit";
 
 export const rootreducers = combineReducers({
@@ -23,4 +25,6 @@ export const rootreducers = combineReducers({
   timerReducer: setTimerReducer,
   user: userReducer,
   chapter: chapterReducer,
+  shortAns: shortAnsReducer,
+  programmeAns: programmeReducer,
 });

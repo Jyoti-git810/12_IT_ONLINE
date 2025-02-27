@@ -36,7 +36,7 @@ const Chapter = () => {
           chapterId: chapterSelected.chapterID,
         })
         .then((res) => {
-          localStorage.setItem("exameId", res.data.result[0].examId);
+          localStorage.setItem("examId", res.data.result[0].examId);
           router.push("/test-page");
         })
         .catch((e) => console.log(e));

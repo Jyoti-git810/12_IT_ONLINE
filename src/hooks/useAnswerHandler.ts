@@ -1,9 +1,9 @@
-import { ChangeEvent, ChangeEventHandler, useState } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
 
 type AnswerStateType = {
-  question_id: number;
+  QuestionID: number;
   answer: any;
   category_id: number;
   user_id: number;
@@ -12,7 +12,7 @@ type AnswerStateType = {
 export const useAnswerHandler = (categoryId: number) => {
   const [answers, setAnswers] = useState<AnswerStateType[]>([]);
   const dispatch = useAppDispatch();
-  const exameId = JSON.parse(localStorage.getItem("exameId"));
+  const examId = JSON.parse(localStorage.getItem("examId"));
   const { userId } = useAppSelector((state) => state.user.user);
   const chapterSelected = useAppSelector(
     (state) => state.chapter.chapterSelected
@@ -20,15 +20,16 @@ export const useAnswerHandler = (categoryId: number) => {
   const handleAnswerChange = (value: any, questionId: number) => {
     setAnswers((prev) => {
       const answerObj = {
-        question_id: questionId,
+        QuestionID: questionId,
         answer: value,
         category_id: categoryId,
-        user_id: userId,
+        userID: userId,
         chapter_name: chapterSelected.chapterName,
         chapter_id: chapterSelected.chapterID,
-        examId: exameId,
+        examId: examId,
       };
-      const index = prev.findIndex((x) => x.question_id === questionId);
+
+      const index = prev.findIndex((x) => x.QuestionID === questionId);
       let updatedAnswers;
       if (index >= 0) {
         updatedAnswers = [...prev];
@@ -36,7 +37,7 @@ export const useAnswerHandler = (categoryId: number) => {
       } else {
         updatedAnswers = [...prev, answerObj];
       }
-      return updatedAnswers.filter((x) => x.answer.trim() !== "");
+      return updatedAnswers;
     });
     dispatch(
       setQuestionAttemptStatus({

@@ -2,9 +2,10 @@ import { createConnection } from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const conn = await createConnection();
+  let conn;
   const SQL = `SELECT chapterID, chapterName FROM ChapterDetails`;
   try {
+    conn = await createConnection();
     const [chapter] = await conn.query(SQL);
     return NextResponse.json({ chapter: chapter, status: 200 });
   } catch (e) {

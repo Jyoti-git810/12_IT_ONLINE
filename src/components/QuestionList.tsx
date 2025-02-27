@@ -5,6 +5,7 @@ import MCQ from "./QuestionType/MCQ";
 import Rearrange from "./QuestionType/Rearrange";
 import { useAppSelector } from "@/redux/hook";
 import { mcqType } from "@/constant/questionType";
+import Short, { ShortAns } from "./QuestionType/short";
 
 const QuestionList = () => {
   const categoryFullName = useAppSelector(
@@ -26,6 +27,8 @@ const QuestionList = () => {
         <TrueFalse categoryId={categoryId} />
       ) : categoryName === "Rearrange" ? (
         <Rearrange categoryId={categoryId} />
+      ) : categoryName === "Short Ans" || categoryName === "Programme" ? (
+        <Short />
       ) : (
         ""
       )}

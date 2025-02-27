@@ -11,13 +11,6 @@ const TrueFalse = ({ categoryId }: categoryType) => {
   const trueORFalseQuestions = useAppSelector(
     (state) => state.trueORfalse.trueOrFalseQuestions
   );
-  const handleAnswerSubmit = (
-    event: ChangeEvent<HTMLInputElement>,
-    question_id: number
-  ) => {
-    const value = Number(event.target.value);
-    handleAnswerChange(value, question_id);
-  };
 
   return (
     <div>
@@ -26,7 +19,8 @@ const TrueFalse = ({ categoryId }: categoryType) => {
           question_id={questions.QuestionID}
           question_text={questions.QuestionText}
           id={id}
-          handleAnswerSubmit={handleAnswerSubmit}
+          categoryId={questions.category_id}
+          handleAnswerChange={handleAnswerChange}
         />
       ))}
       <SubmitBtn answerArray={answers} />

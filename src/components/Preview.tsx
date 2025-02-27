@@ -8,6 +8,7 @@ interface PreviewProps {
 
 const Preview = ({ categoryID }: PreviewProps) => {
   const previewQuestions = useAppSelector((state) => state.marks.previewData);
+  console.log("previewQuestions", previewQuestions);
   const filtercategoryQuestions = previewQuestions.filter(
     (x: any) => x.category_id === categoryID
   );

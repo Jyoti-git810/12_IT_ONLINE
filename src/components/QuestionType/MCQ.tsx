@@ -1,89 +1,117 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SubmitBtn from "../submitBtn";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import McqQuestions from "../McqQuestions";
 import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
 import { mcqType } from "@/util/types";
+import isEqual from "lodash/isEqual";
+
+interface AnswerType {
+  QuestionID: number;
+  answer: (string | number)[];
+  checked: Record<string | number, boolean>;
+  category_id: string;
+  user_id: string;
+  chapter_name: string;
+  chapter_id: string;
+  examId: string | null;
+}
 
 const MCQ = () => {
-  const [mcqAnswer, setMcqAnswer] = useState([]);
-  const mcqQuestions: mcqType[] = useAppSelector(
+  const [mcqAnswer, setMcqAnswer] = useState<AnswerType[]>([]);
+
+  const dispatch = useAppDispatch();
+  const mcqQuestions = useAppSelector(
     (state) => state.mcqQuestions.mcqQuestions
   );
   const categoryName = useAppSelector((state) => state.categories.categoryName);
   const categoryId = useAppSelector((state) => state.categories.categoryId);
-  const mcqQuestionsByCategory = mcqQuestions.filter(
-    (x) => x.categoryName === categoryName
-  );
   const chapterSelected = useAppSelector(
     (state) => state.chapter.chapterSelected
   );
-  const exameId = JSON.parse(localStorage.getItem("exameId"));
+  const { userStoredAnswer } = useAppSelector((state) => state.UserResponse);
   const { userId } = useAppSelector((state) => state.user.user);
-  const dispatch = useAppDispatch();
+
+  const mcqQuestionsByCategory = mcqQuestions.filter(
+    (x) => x.categoryName === categoryName
+  );
+
+  const examId =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("examId"))
+      : null;
+
+  useEffect(() => {
+    if (
+      userStoredAnswer &&
+      Array.isArray(userStoredAnswer) &&
+      !isEqual(mcqAnswer, userStoredAnswer)
+    ) {
+      setMcqAnswer(userStoredAnswer);
+    }
+  }, [userStoredAnswer]);
+
   const handleMcqAnswer = (
-    event: ChangeEvent<HTMLInputElement>,
+    value: string | number,
+    isChecked: boolean,
     QuestionId: number
   ) => {
-    const value = event.target.value;
-    const isChecked = event.target.checked;
-    setMcqAnswer((prev: any) => {
-      let mcqCategoryObj: any = [...prev];
-      const questionIndex = mcqCategoryObj?.findIndex(
-        (x: any) => x.question_id === QuestionId
+    setMcqAnswer((prev) => {
+      let updatedAnswers = [...prev];
+      const questionIndex = updatedAnswers.findIndex(
+        (x) => x.QuestionID === QuestionId
       );
 
       if (questionIndex >= 0) {
-        mcqCategoryObj = mcqCategoryObj.map((item: any) => {
-          if (item.question_id === QuestionId) {
-            const updatedAnswers = isChecked
-              ? [...item.answer, value]
-              : item.answer.filter((ans: any) => ans !== value);
+        updatedAnswers = updatedAnswers.map((item) => {
+          const currentAns = Array.isArray(item.answer)
+            ? item.answer
+            : JSON.parse(item.answer);
+          console.log("currentAns", currentAns);
+          if (item.QuestionID === QuestionId) {
+            const updatedChecked = { ...item.checked, [value]: isChecked };
+            const updatedAnswer = isChecked
+              ? [...currentAns, value]
+              : currentAns.filter((ans) => ans !== value);
 
-            const isCheckedObj = { ...item.checked, [value]: isChecked };
-            return {
-              ...item,
-              checked: isCheckedObj,
-              answer: updatedAnswers,
-            };
+            return { ...item, answer: updatedAnswer, checked: updatedChecked };
           }
           return item;
         });
-        mcqCategoryObj = mcqCategoryObj.filter((x: any) => x.answer.length > 0);
       } else if (isChecked) {
-        mcqCategoryObj = [
-          ...mcqCategoryObj,
-          {
-            question_id: QuestionId,
-            answer: [value],
-            checked: { [value]: isChecked },
-            category_id: categoryId,
-            user_id: userId,
-            chapter_name: chapterSelected.chapterName,
-            chapter_id: chapterSelected.chapterID,
-            examId: exameId,
-          },
-        ];
+        updatedAnswers.push({
+          QuestionID: QuestionId,
+          answer: [value],
+          checked: { [value]: isChecked },
+          category_id: categoryId,
+          userID: userId,
+          chapter_name: chapterSelected.chapterName,
+          chapter_id: chapterSelected.chapterID,
+          examId,
+        });
       }
-      const answerArray = mcqCategoryObj.find(
-        (x: any) => x.question_id === QuestionId
-      );
 
+      const currentAnswer = updatedAnswers.find(
+        (x) => x.QuestionID === QuestionId
+      );
       dispatch(
         setQuestionAttemptStatus({
           question_id: QuestionId,
-          value: answerArray,
+          value: currentAnswer,
           category_id: categoryId,
         })
       );
-      return mcqCategoryObj;
+
+      return updatedAnswers;
     });
   };
+
   return (
     <div>
-      {mcqQuestionsByCategory.map((mcq: any, id: number) => (
+      {mcqQuestionsByCategory.map((mcq, id) => (
         <McqQuestions
+          key={mcq.QuestionID}
           QuestionText={mcq.QuestionText}
           options={mcq.options}
           QuestionId={mcq.QuestionID}

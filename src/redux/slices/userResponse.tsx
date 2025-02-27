@@ -6,11 +6,13 @@ interface UserResponseType {
   question_id: number;
   category_type: string;
 }
-interface answerState {
+interface AnswerState {
   userResponse: UserResponseType[];
+  userStoredAnswer: any[];
 }
-const initialState: answerState = {
+const initialState: AnswerState = {
   userResponse: [],
+  userStoredAnswer: [],
 };
 
 const UserResponseSlice = createSlice({
@@ -31,8 +33,12 @@ const UserResponseSlice = createSlice({
         }
       });
     },
+    getUserStoredAnswer(state, action) {
+      state.userStoredAnswer = action.payload;
+    },
   },
 });
 export default UserResponseSlice.reducer;
 
-export const { setUserResponse } = UserResponseSlice.actions;
+export const { setUserResponse, getUserStoredAnswer } =
+  UserResponseSlice.actions;

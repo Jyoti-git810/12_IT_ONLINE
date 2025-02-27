@@ -6,28 +6,32 @@ import CategoryTypes from "@/components/CategoryTypes";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { setIntialQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
 import { getAllCategory } from "@/redux/slices/categories";
-import { getFibQuestion, getFibUserResponse } from "@/redux/slices/Fib";
+import { getFibQuestion } from "@/redux/slices/Fib";
 import { setRearrangeQuestions } from "@/redux/slices/rearrange";
 import { getMcqQuestions } from "@/redux/slices/mcqQuestions";
 import { setTrueFalseQuestions } from "@/redux/slices/trueORFalseQuestions";
 import { getQuestionsStatusObj } from "@/util/questionStatus";
 import { transformMatch } from "@/util/transformeRearrange";
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import axios from "axios";
-import moment from "moment";
 import { setTimer } from "@/redux/slices/timer";
 import { useRouter } from "next/navigation";
-import { setUser } from "@/redux/slices/user";
-import { tableName } from "@/constants";
+import { getTableName } from "@/util/helper";
+import { getUserStoredAnswer } from "@/redux/slices/userResponse";
+import { getShortAnsSliceQuestions } from "@/redux/slices/short";
+import { getProgrammeSliceQuestions } from "@/redux/slices/programme";
 
 const Page = () => {
-  const categories = useAppSelector((state) => state.categories.categories);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const endTime = useRef<number>(Date.now() + 60 * 60 * 1000);
+  const { categories, categoryName } = useAppSelector(
+    (state) => state.categories
+  );
+  const { userId } = useAppSelector((state) => state.user.user);
+  const examId = localStorage.getItem("examId");
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { chapterName } = useAppSelector((state) => state.chapter);
-  const { userId } = useAppSelector((state) => state.user.user);
-  console.log("userId", userId);
 
   // Define API calls using useCallback to prevent re-creating the function
   const callApis = useCallback(async () => {
@@ -38,18 +42,16 @@ const Page = () => {
         mcqResponseJson,
         trueOrfalse,
         rearrangeJson,
+        shortAnsJson,
+        programmeJson,
       ] = await Promise.all([
         axios.get("api/category").then((res) => res.data),
         axios.get("api/questions/fib").then((res) => res.data),
         axios.get("api/questions/mcq").then((res) => res.data),
         axios.get("api/questions/trueOrfalse").then((res) => res.data),
         axios.get("api/questions/rearrange").then((res) => res.data),
-        axios
-          .post("/api/answer/select", {
-            tableName: "FIBUserAnswer",
-            userId: userId,
-          })
-          .then((res) => dispatch(getFibUserResponse(res.data.data))),
+        axios.get("api/questions/short").then((res) => res.data),
+        axios.get("api/questions/programme").then((res) => res.data),
       ]);
       const rearrange = transformMatch(rearrangeJson);
       const flatRearrangeData = rearrange.flatMap((x) => x.data);
@@ -58,6 +60,8 @@ const Page = () => {
         ...mcqResponseJson,
         ...trueOrfalse,
         ...flatRearrangeData,
+        ...shortAnsJson,
+        ...programmeJson,
       ];
       const questionsStatusData = getQuestionsStatusObj(allQuestions);
       dispatch(setIntialQuestionAttemptStatus(questionsStatusData));
@@ -66,6 +70,8 @@ const Page = () => {
       dispatch(getMcqQuestions(mcqResponseJson));
       dispatch(setTrueFalseQuestions(trueOrfalse));
       dispatch(setRearrangeQuestions(rearrange));
+      dispatch(getShortAnsSliceQuestions(shortAnsJson));
+      dispatch(getProgrammeSliceQuestions(programmeJson));
 
       // Store categories locally (if necessary)
       localStorage.setItem("categories", JSON.stringify(categoryResult));
@@ -77,26 +83,47 @@ const Page = () => {
     }
   }, [dispatch]);
 
+  const callUserAnserApi = useCallback(async () => {
+    axios
+      .post("/api/answer/get_user_ans", {
+        tableName: getTableName(categoryName),
+        userId: userId,
+        examId: examId,
+      })
+      .then((res) => dispatch(getUserStoredAnswer(res.data.data)))
+      .catch((e) => console.log(e));
+  }, [categoryName]);
+
   useEffect(() => {
     callApis();
   }, [callApis]);
 
   useEffect(() => {
-    const endTime = new Date().getTime() + 60 * 60 * 1000;
-    const interval = setInterval(() => {
-      const diff = endTime - new Date().getTime();
+    callUserAnserApi();
+  }, [callUserAnserApi]);
+
+  useEffect(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current); // Ensure previous interval is cleared
+    }
+
+    intervalRef.current = setInterval(() => {
+      const diff = endTime.current - Date.now();
+      if (diff <= 0) {
+        clearInterval(intervalRef.current!);
+        router.push("/result");
+        return;
+      }
+
       const hour = Math.floor((diff / (60 * 60 * 1000)) % 24);
       const min = Math.floor((diff / (60 * 1000)) % 60);
       const sec = Math.floor((diff / 1000) % 60);
-      if (diff <= 0) {
-        clearInterval(interval);
-        router.push("/result");
-      } else {
-        dispatch(setTimer({ hour, min, sec }));
-      }
-    }, 1000);
-  }, []);
 
+      dispatch(setTimer({ hour, min, sec }));
+    }, 1000);
+
+    return () => clearInterval(intervalRef.current!); // Cleanup on unmount
+  }, [dispatch, router]);
   return (
     <>
       <div className="text-black flex justify-between items-start mt-2">

@@ -16,7 +16,6 @@ const marksSlice = createSlice({
   initialState: initialState,
   reducers: {
     setMarks(state, action) {
-      console.log("action", action.payload);
       const {
         trueFalseTotalMarks,
         fibTotalMarks,

@@ -1,7 +1,7 @@
 //import { RearrangeQue } from "@/constant/questions";
 import { useAnswerHandler } from "@/hooks/useAnswerHandler";
 import { useAppSelector } from "@/redux/hook";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import SubmitBtn from "../submitBtn";
 
 interface RearrangePropsType {
@@ -9,15 +9,26 @@ interface RearrangePropsType {
 }
 
 const Rearrange = ({ categoryId }: RearrangePropsType) => {
+  const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
   const { answers, handleAnswerChange } = useAnswerHandler(categoryId);
+  const { userStoredAnswer } = useAppSelector((state) => state.UserResponse);
   const rearrangeQuestions = useAppSelector(
     (state) => state.rearrangeReducer.rearrangeQuestions
   );
+  useEffect(() => {
+    const inputValueObj = userStoredAnswer.reduce((acc, curr) => {
+      acc[curr.QuestionID] = curr.answer;
+      return acc;
+    }, {} as { [key: number]: string });
+    setInputValues(inputValueObj);
+  }, [userStoredAnswer]);
+
   const onInputChange = (
     event: ChangeEvent<HTMLInputElement>,
     QuestionID: number
   ) => {
     const value = event.target.value;
+    setInputValues((prev) => ({ ...prev, [QuestionID]: value }));
     handleAnswerChange(value, QuestionID);
   };
   return (
@@ -46,15 +57,18 @@ const Rearrange = ({ categoryId }: RearrangePropsType) => {
             <h1 className="p-4">Answer</h1>
             <div className="flex flex-col mt-4 p-6">
               <ol className="ol-alpha">
-                {x.data.map((x: any, id: number) => (
-                  <li key={id}>
-                    <input
-                      type="text"
-                      className="w-16 ml-2"
-                      onChange={(event) => onInputChange(event, x.QuestionID)}
-                    />
-                  </li>
-                ))}
+                {x.data.map((x: any, id: number) => {
+                  return (
+                    <li key={id}>
+                      <input
+                        type="text"
+                        className="w-16 ml-2"
+                        value={inputValues[x.QuestionID]}
+                        onChange={(event) => onInputChange(event, x.QuestionID)}
+                      />
+                    </li>
+                  );
+                })}
               </ol>
             </div>
           </div>
