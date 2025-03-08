@@ -30,13 +30,14 @@ export const useAnswerHandler = (categoryId: number) => {
       };
 
       const index = prev.findIndex((x) => x.QuestionID === questionId);
-      let updatedAnswers;
+      let updatedAnswers = [];
       if (index >= 0) {
         updatedAnswers = [...prev];
         updatedAnswers[index] = answerObj;
       } else {
-        updatedAnswers = [...prev, answerObj];
+        if (value) updatedAnswers = [...prev, answerObj];
       }
+      console.log("updatedAnswers", updatedAnswers);
       return updatedAnswers;
     });
     dispatch(

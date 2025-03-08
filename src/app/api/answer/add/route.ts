@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
       let parsedAnswer;
       try {
         parsedAnswer = Array.isArray(item.answer)
-          ? item.answer
-          : JSON.parse(item.answer);
+          ? JSON.parse(item.answer)
+          : item.answer;
       } catch {
         parsedAnswer = item.answer;
       }

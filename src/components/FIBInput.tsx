@@ -28,12 +28,10 @@ const FIBInput = ({
     (x: any) => x.QuestionID === question_id && x.category_id === categoryId
   )?.answer;
 
-  // 🔹 Sync local state with Redux answer on mount
   useEffect(() => {
     setValue(userAnswer ?? "");
   }, [userAnswer]);
 
-  // 🔹 Handle input change with debouncing
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
 
@@ -43,7 +41,6 @@ const FIBInput = ({
     }, 300);
   };
 
-  // 🔹 Update answer in Redux when debounceValue updates
   useEffect(() => {
     handleAnswerChange(debounceValue, question_id);
     dispatch(
