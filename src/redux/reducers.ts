@@ -3,7 +3,7 @@ import UserResponseReducer from "./slices/userResponse";
 import FIBReducer from "./slices/Fib";
 import mcqQuestionsReducer from "./slices/mcqQuestions";
 import trueORfalseReducer from "./slices/trueORFalseQuestions";
-import questionAttemptStatus from "./slices/QuestionAttempt";
+import questionStatusReducer from "./slices/questionsStatus";
 import rearrangeReducer from "./slices/rearrange";
 import marksReducer from "./slices/marks";
 import setTimerReducer from "./slices/timer";
@@ -19,7 +19,7 @@ export const rootreducers = combineReducers({
   FIB: FIBReducer,
   mcqQuestions: mcqQuestionsReducer,
   trueORfalse: trueORfalseReducer,
-  questionAttemptStatus: questionAttemptStatus,
+  questionsStatus: questionStatusReducer,
   rearrangeReducer: rearrangeReducer,
   marks: marksReducer,
   timerReducer: setTimerReducer,

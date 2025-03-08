@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { setUserResponse } from "@/redux/slices/userResponse";
-import { setIsSubmittedStatus } from "@/redux/slices/QuestionAttempt";
+import { setSubmittedStatus } from "@/redux/slices/questionsStatus";
 import React from "react";
 import axios from "axios";
 import { getTableName } from "@/util/helper";
@@ -32,12 +32,13 @@ const SubmitBtn = ({ answerArray }) => {
       .then((data) => console.log("data", data.data))
       .catch((e) => console.log(e));
     dispatch(setUserResponse(answerArray));
+
     const answerSubmit = answerArray.map((item) => ({
-      question_id: item.question_id,
+      question_id: item.QuestionID,
       isSubmitted: true,
       category_id: item.category_id,
     }));
-    dispatch(setIsSubmittedStatus(answerSubmit));
+    dispatch(setSubmittedStatus(answerSubmit));
   };
   return (
     <button className="bg-35a4b9 px-14 py-2 mt-4" onClick={onSubmit}>

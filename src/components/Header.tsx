@@ -30,7 +30,7 @@ const Header = () => {
             Current Time:{" "}
             <span
               className={`font-bold text-black  ${
-                min <= 10 ? "text-red-700" : ""
+                hour === 0 && min <= 10 ? "text-red-700" : ""
               }`}
             >
               {hour}:{min.toString().padStart(2, "0")}:

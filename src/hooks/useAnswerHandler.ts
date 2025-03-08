@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
+import { setQuestionAttemptStatus } from "@/redux/slices/questionsStatus";
 
 type AnswerStateType = {
   QuestionID: number;

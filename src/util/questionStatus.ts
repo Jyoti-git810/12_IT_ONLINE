@@ -2,6 +2,7 @@ interface AllQuestionsType {
   QuestionID: number;
   QuestionText: string;
   category_id: number;
+  isSubmit: boolean;
 }
 type AccArray = {
   question_id: number;
@@ -14,6 +15,7 @@ interface AccType {
 }
 
 export const getQuestionsStatusObj = (allQuestions: AllQuestionsType[]) => {
+  console.log("allQuestions", allQuestions);
   const isAttemptObj = allQuestions.reduce((acc: AccType, x) => {
     const category = x.category_id;
     if (!acc[category]) {
@@ -22,7 +24,7 @@ export const getQuestionsStatusObj = (allQuestions: AllQuestionsType[]) => {
     acc[category].push({
       question_id: x.QuestionID,
       isAttempt: false,
-      isSubmitted: false,
+      isSubmitted: x.isSubmit ? true : false,
       isFiledDisabled: false,
     });
 

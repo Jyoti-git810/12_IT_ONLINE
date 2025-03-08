@@ -8,7 +8,6 @@ interface PreviewProps {
 
 const Preview = ({ categoryID }: PreviewProps) => {
   const previewQuestions = useAppSelector((state) => state.marks.previewData);
-  console.log("previewQuestions", previewQuestions);
   const filtercategoryQuestions = previewQuestions.filter(
     (x: any) => x.category_id === categoryID
   );
@@ -30,12 +29,17 @@ const Preview = ({ categoryID }: PreviewProps) => {
               <span>Q{id + 1} </span>
               <span className="text-lg ml-4">{QuestionText}</span>
             </div>
-            <div className="mt-2 mb-2">
-              <span className="mx-8">Correct Answer</span>
-              <span className="text-green-600 font-bold">
-                {correctAns ? correctAns : "Not Answered"}
-              </span>
-            </div>
+            {categoryID === 8 ||
+              (categoryID === 9 ? (
+                <></>
+              ) : (
+                <div className="mt-2 mb-2">
+                  <span className="mx-8">Correct Answer</span>
+                  <span className="text-green-600 font-bold">
+                    {correctAns ? correctAns : "Not Answered"}
+                  </span>
+                </div>
+              ))}
             <div>
               <span className="mx-8">Your Answer</span>
               <span>{userRes ? userRes : "Not Answered"}</span>

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import moment from "moment";
 
 const now = new Date().getTime();
 const one = now + 60 * 60 * 1000;
@@ -13,8 +12,6 @@ const initialState = {
   min: min,
   sec: sec,
 };
-
-console.log("time===>", initialState);
 
 const timerSlice = createSlice({
   name: "timer",

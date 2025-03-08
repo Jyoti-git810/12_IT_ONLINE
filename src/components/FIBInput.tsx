@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
+import { setQuestionAttemptStatus } from "@/redux/slices/questionsStatus";
 import React, { ChangeEvent, useEffect, useState, useRef } from "react";
 
 interface FIBInputProps {
@@ -45,16 +45,14 @@ const FIBInput = ({
 
   // 🔹 Update answer in Redux when debounceValue updates
   useEffect(() => {
-    if (debounceValue) {
-      handleAnswerChange(debounceValue, question_id);
-      dispatch(
-        setQuestionAttemptStatus({
-          question_id,
-          value: debounceValue,
-          category_id: categoryId,
-        })
-      );
-    }
+    handleAnswerChange(debounceValue, question_id);
+    dispatch(
+      setQuestionAttemptStatus({
+        question_id,
+        value: debounceValue,
+        category_id: categoryId,
+      })
+    );
   }, [debounceValue, question_id, categoryId, dispatch]);
 
   return (

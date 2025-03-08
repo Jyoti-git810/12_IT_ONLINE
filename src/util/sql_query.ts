@@ -42,3 +42,9 @@ export const rearrangePreviewSQL = `SELECT RQ.leftPart as QuestionText, RQ.Quest
 export const trueFalsePreview = `SELECT t.QuestionText, t.QuestionID,t.CorrectAnswer,t.category_id,t.Marks,tu.answer as userAnswer,tu.QuestionID as answeredQustionID,tu.category_id as answredQuestionCategoryId,tu.userID FROM TruOrFalse t
         LEFT JOIN TruFalseUserAnswer tu
         on t.QuestionID=tu.QuestionID AND tu.userID=? AND tu.examId `;
+export const shortPreviewSQL = `SELECT sa.QuestionText, sa.QuestionID,sa.category_id,sa.Marks,suAns.answer as userAnswer,suAns.QuestionID as answeredQustionID,suAns.category_id as answredQuestionID,suAns.userID FROM  shortAns sa
+    LEFT JOIN shortUserAnswer suAns
+    on sa.QuestionID=sa.QuestionID AND suAns.userID=? AND suAns.examId=?`;
+export const programmePreviewSQL = `SELECT p.QuestionText, p.QuestionID,p.category_id,p.Marks,pu.answer as userAnswer,pu.QuestionID as answeredQustionID,pu.category_id as answredQuestionID,pu.userID FROM  programe p
+    LEFT JOIN programeUserAnswers pu
+    on p.QuestionID=p.QuestionID AND pu.userID=? AND pu.examId=?`;

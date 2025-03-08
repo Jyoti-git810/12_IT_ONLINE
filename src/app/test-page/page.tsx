@@ -4,7 +4,7 @@ import QuestionsStatus from "@/components/QuestionsStatus";
 import QuestionList from "@/components/QuestionList";
 import CategoryTypes from "@/components/CategoryTypes";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
-import { setIntialQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
+import { setIntialQuestionsStatus } from "@/redux/slices/questionsStatus";
 import { getAllCategory } from "@/redux/slices/categories";
 import { getFibQuestion } from "@/redux/slices/Fib";
 import { setRearrangeQuestions } from "@/redux/slices/rearrange";
@@ -12,7 +12,7 @@ import { getMcqQuestions } from "@/redux/slices/mcqQuestions";
 import { setTrueFalseQuestions } from "@/redux/slices/trueORFalseQuestions";
 import { getQuestionsStatusObj } from "@/util/questionStatus";
 import { transformMatch } from "@/util/transformeRearrange";
-import React, { useEffect, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { setTimer } from "@/redux/slices/timer";
@@ -23,6 +23,7 @@ import { getShortAnsSliceQuestions } from "@/redux/slices/short";
 import { getProgrammeSliceQuestions } from "@/redux/slices/programme";
 
 const Page = () => {
+  const [QState, setQState] = useState({});
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const endTime = useRef<number>(Date.now() + 60 * 60 * 1000);
   const { categories, categoryName } = useAppSelector(
@@ -46,7 +47,7 @@ const Page = () => {
         programmeJson,
       ] = await Promise.all([
         axios.get("api/category").then((res) => res.data),
-        axios.get("api/questions/fib").then((res) => res.data),
+        axios.get(`api/questions/fib`).then((res) => res.data),
         axios.get("api/questions/mcq").then((res) => res.data),
         axios.get("api/questions/trueOrfalse").then((res) => res.data),
         axios.get("api/questions/rearrange").then((res) => res.data),
@@ -64,7 +65,7 @@ const Page = () => {
         ...programmeJson,
       ];
       const questionsStatusData = getQuestionsStatusObj(allQuestions);
-      dispatch(setIntialQuestionAttemptStatus(questionsStatusData));
+      setQState(questionsStatusData);
       dispatch(getAllCategory(categoryResult));
       dispatch(getFibQuestion(fibResponseJson));
       dispatch(getMcqQuestions(mcqResponseJson));
@@ -124,6 +125,9 @@ const Page = () => {
 
     return () => clearInterval(intervalRef.current!); // Cleanup on unmount
   }, [dispatch, router]);
+  useEffect(() => {
+    dispatch(setIntialQuestionsStatus(QState));
+  }, [QState]);
   return (
     <>
       <div className="text-black flex justify-between items-start mt-2">
@@ -133,17 +137,24 @@ const Page = () => {
           <p className="p-2">You are Viewing</p>
           <p>True/False</p>
         </div>
-        <div className="flex justify-between">
-          {categories?.map((x) => (
-            <CategoryTypes
-              key={x.category_id}
-              categoryId={x.category_id}
-              categoryFullName={x.category_full_name}
-              categoryName={x.category_name}
-            />
-          ))}
+        <div className="flex justify-between flex-col">
+          <div>
+            {categories?.map((x) => (
+              <CategoryTypes
+                key={x.category_id}
+                categoryId={x.category_id}
+                categoryFullName={x.category_full_name}
+                categoryName={x.category_name}
+              />
+            ))}
+          </div>
+          <Link
+            href="/result"
+            className="bg-35a4b9 w-28 text-white text-center mt-8 mx-4 py-2"
+          >
+            End Exam
+          </Link>
         </div>
-        <Link href="/result">END Exam</Link>
       </div>
       <div className="flex">
         <QuestionsStatus />

@@ -3,8 +3,9 @@ import {
   fetchMarksSqlQueryMapping,
   fibPreviewSQL,
   mcqPreviewSQL,
-  previewQuestionSQLMapping,
+  programmePreviewSQL,
   rearrangePreviewSQL,
+  shortPreviewSQL,
   trueFalsePreview,
 } from "@/util/sql_query";
 import { NextRequest, NextResponse } from "next/server";
@@ -22,11 +23,15 @@ export async function GET(request: NextRequest, response: NextResponse) {
       [fibUserResponse],
       [trueFalseUserResponse],
       [rearrangeserResponse],
+      [shortAnsResponse],
+      [programmeResponse],
     ] = await Promise.all([
       conn.query(mcqPreviewSQL, [userId, examId]),
       conn.query(fibPreviewSQL, [userId, examId]),
       conn.query(trueFalsePreview, [userId, examId]),
       conn.query(rearrangePreviewSQL, [userId, examId]),
+      conn.query(shortPreviewSQL, [userId, examId]),
+      conn.query(programmePreviewSQL, [userId, examId]),
     ]);
 
     return NextResponse.json([
@@ -34,6 +39,8 @@ export async function GET(request: NextRequest, response: NextResponse) {
       ...fibUserResponse,
       ...trueFalseUserResponse,
       ...rearrangeserResponse,
+      ...shortAnsResponse,
+      ...programmeResponse,
     ]);
   } catch (e) {
     console.log(e);

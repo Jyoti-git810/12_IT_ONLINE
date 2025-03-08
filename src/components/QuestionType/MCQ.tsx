@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import SubmitBtn from "../submitBtn";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import McqQuestions from "../McqQuestions";
-import { setQuestionAttemptStatus } from "@/redux/slices/QuestionAttempt";
+import { setQuestionAttemptStatus } from "@/redux/slices/questionsStatus";
 import { mcqType } from "@/util/types";
 import isEqual from "lodash/isEqual";
 
