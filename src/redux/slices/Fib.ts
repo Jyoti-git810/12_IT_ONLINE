@@ -13,7 +13,6 @@ const FIB = createSlice({
       state.fibQuestions = action.payload;
     },
     getFibUserResponse(state, action) {
-      console.log("action", action.payload);
       state.fibUserResponse = action.payload;
     },
   },

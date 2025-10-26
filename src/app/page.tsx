@@ -5,18 +5,20 @@ import { setChapter } from "@/redux/slices/chapter";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Chapter from "./chapter/page";
 
 export default function Home() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  useEffect(() => {
+  const onGoToChapter = () => {
     axios
       .get("/api/chapter")
       .then((data) => {
         dispatch(setChapter(data.data.chapter));
+        router.push("chapter");
       })
       .catch((e) => console.log(e));
-  }, []);
+  };
 
   return (
     <div className="p-5 font-sans flex flex-col justify-center items-center">
@@ -104,18 +106,8 @@ export default function Home() {
           </tr>
         </tbody>
       </table>
-      <div>
-        <select>
-          <option value=""></option>
-          <option value=""></option>
-        </select>
-      </div>
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-9"
-        onClick={() => router.push("chapter")}
-      >
-        Select Chapter
-      </button>
+
+      <Chapter />
     </div>
   );
 }

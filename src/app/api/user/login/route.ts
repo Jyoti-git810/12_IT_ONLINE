@@ -23,11 +23,11 @@ export async function POST(request: NextRequest, response: NextRequest) {
     const token = await new SignJWT({ userName, EMail })
       .setProtectedHeader({ alg: "HS256" }) // Use HMAC SHA-256
       .setIssuedAt()
-      .setExpirationTime("2h") // Token expires in 2 hours
+      .setExpirationTime("1h") // Token expires in 2 hours
       .sign(secretKey);
     cookies().set("uid", token, {
       httpOnly: true,
-      maxAge: 60 * 60 * 24, // Expires in 1 day
+      maxAge: 60 * 60, // Expires in 1 day
       path: "/", // Cookie is accessible across the entire site
     });
     return NextResponse.json({

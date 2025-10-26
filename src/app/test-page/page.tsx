@@ -24,6 +24,7 @@ import { getProgrammeSliceQuestions } from "@/redux/slices/programme";
 
 const Page = () => {
   const [QState, setQState] = useState({});
+  const [loading, setLoading] = useState(true);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const endTime = useRef<number>(Date.now() + 60 * 60 * 1000);
   const { categories, categoryName } = useAppSelector(
@@ -31,11 +32,14 @@ const Page = () => {
   );
   const { userId } = useAppSelector((state) => state.user.user);
   const examId = localStorage.getItem("examId");
+  const { chapterID } = useAppSelector(
+    (state) => state.chapter.chapterSelected
+  );
   const dispatch = useAppDispatch();
   const router = useRouter();
 
   // Define API calls using useCallback to prevent re-creating the function
-  const callApis = useCallback(async () => {
+  const callApis = async () => {
     try {
       const [
         categoryResult,
@@ -48,7 +52,9 @@ const Page = () => {
       ] = await Promise.all([
         axios.get("api/category").then((res) => res.data),
         axios.get(`api/questions/fib`).then((res) => res.data),
-        axios.get("api/questions/mcq").then((res) => res.data),
+        axios
+          .get(`api/questions/mcq/?chapterID=${chapterID}`)
+          .then((res) => res.data),
         axios.get("api/questions/trueOrfalse").then((res) => res.data),
         axios.get("api/questions/rearrange").then((res) => res.data),
         axios.get("api/questions/short").then((res) => res.data),
@@ -56,6 +62,7 @@ const Page = () => {
       ]);
       const rearrange = transformMatch(rearrangeJson);
       const flatRearrangeData = rearrange.flatMap((x) => x.data);
+
       const allQuestions = [
         ...fibResponseJson,
         ...mcqResponseJson,
@@ -76,13 +83,15 @@ const Page = () => {
 
       // Store categories locally (if necessary)
       localStorage.setItem("categories", JSON.stringify(categoryResult));
+      localStorage.setItem("FIB", JSON.stringify(fibResponseJson));
+      setLoading(false);
     } catch (error) {
       console.error(
         "Error fetching data:",
         error.response?.data || error.message
       );
     }
-  }, [dispatch]);
+  };
 
   const callUserAnserApi = useCallback(async () => {
     axios
@@ -96,8 +105,14 @@ const Page = () => {
   }, [categoryName]);
 
   useEffect(() => {
-    callApis();
-  }, [callApis]);
+    callApis();;''
+    const timeoutId = setTimeout(() => {
+      callApis();
+    }, 60 * 60 * 1000); // 1 hour
+
+    // Cleanup timeout when component unmounts or user logs out
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     callUserAnserApi();
@@ -128,6 +143,13 @@ const Page = () => {
   useEffect(() => {
     dispatch(setIntialQuestionsStatus(QState));
   }, [QState]);
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-2xl text-gray-500">Loading...</p>
+      </div>
+    );
+  }
   return (
     <>
       <div className="text-black flex justify-between items-start mt-2">

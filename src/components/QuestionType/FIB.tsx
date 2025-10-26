@@ -9,7 +9,9 @@ import { categoryType, FIBType } from "@/util/types";
 
 const FIB = ({ categoryId }: categoryType) => {
   const { answers, handleAnswerChange } = useAnswerHandler(categoryId);
-  const { fibQuestions } = useAppSelector((state) => state.FIB);
+  const fibQuestions = JSON.parse(
+    localStorage.getItem("FIB") || "[]"
+  ) as FIBType[];
   return (
     <div>
       {fibQuestions.map((x: FIBType, id) => {

@@ -9,6 +9,7 @@ export const createConnection = async () => {
       user: "root",
       database: "IT-ONLINE",
       waitForConnections: true,
+      queueLimit: 0,
     });
   }
   return pool;

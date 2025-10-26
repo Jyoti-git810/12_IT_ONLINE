@@ -37,7 +37,6 @@ export const useAnswerHandler = (categoryId: number) => {
       } else {
         if (value) updatedAnswers = [...prev, answerObj];
       }
-      console.log("updatedAnswers", updatedAnswers);
       return updatedAnswers;
     });
     dispatch(

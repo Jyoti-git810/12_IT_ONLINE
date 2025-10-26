@@ -44,7 +44,7 @@ const Chapter = () => {
   };
   return (
     <div className="flex justify-center flex-col items-center mt-20">
-      <Select onValueChange={onChapSelect}>
+      {/* <Select onValueChange={onChapSelect}>
         <SelectTrigger className="w-80">
           <SelectValue placeholder="Select Chapter" />
         </SelectTrigger>
@@ -53,7 +53,7 @@ const Chapter = () => {
             <SelectItem value={chap}>{chap.chapterName}</SelectItem>
           ))}
         </SelectContent>
-      </Select>
+      </Select> */}
       <button
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-9"
         onClick={onTestStart}

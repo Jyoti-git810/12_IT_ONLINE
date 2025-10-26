@@ -62,7 +62,7 @@ const Rearrange = ({ categoryId }: RearrangePropsType) => {
                     <li key={id}>
                       <input
                         type="text"
-                        className="w-16 ml-2"
+                        className="w-40 ml-2 border-1 border-gray-400"
                         value={inputValues[x.QuestionID]}
                         onChange={(event) => onInputChange(event, x.QuestionID)}
                       />

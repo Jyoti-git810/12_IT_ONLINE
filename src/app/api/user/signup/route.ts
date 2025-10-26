@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
     const conn = await createConnection();
     const sqlsearch = `SELECT userId, userName, EMail FROM Users WHERE  EMail = '${email}'`;
     const [userExsist] = await conn.query(sqlsearch);
-    console.log("userExsist", userExsist);
     if (userExsist.length) {
       return NextResponse.json({ message: "User Already Exsist", status: 200 });
     } else {

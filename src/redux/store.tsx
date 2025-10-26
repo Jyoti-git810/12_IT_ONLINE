@@ -6,7 +6,7 @@ import storage from "redux-persist/lib/storage";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user", "chapter", "timerReducer"],
+  whitelist: ["user", "chapter", "timerReducer", "FIB"],
 };
 const persistedReducer = persistReducer(persistConfig, rootreducers);
 

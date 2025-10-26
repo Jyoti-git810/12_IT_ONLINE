@@ -30,7 +30,7 @@ const questionsStatusSlice = createSlice({
       }>
     ) {
       const { category_id, value, question_id } = action.payload;
-      if (!state[category_id]) return; // Prevent errors if category doesn't exist
+      if (!state[category_id]) return;
 
       state[category_id] = state[category_id].map((x) =>
         x.question_id === question_id && value ? { ...x, isAttempt: true } : x
